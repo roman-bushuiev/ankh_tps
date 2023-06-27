@@ -1,7 +1,7 @@
 #!/bin/bash
 #PBS -o ankh_tps.txt
 #PBS -e ankh_tps.txt
-#PBS -N ank_tps
+#PBS -N ankh_tps
 
 # Example run from the parent directory of the script
 # qsub -A $PROJECTID_R -q qnvidia -l walltime=48:00:00 train.sh
@@ -13,4 +13,4 @@ cd "${PBS_O_WORKDIR}" || exit 1
 . "${HOME}/miniconda3/etc/profile.d/conda.sh"
 conda activate ankh_tps
 
-python ../train.py
+CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7 python ../train.py
