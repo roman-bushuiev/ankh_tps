@@ -113,7 +113,9 @@ def main():
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
     model, tokenizer = ankh.load_base_model(generation=True)
-    special_token_ids = torch.tensor([i for t, i in tokenizer.get_vocab().items() if t.startswith('<')], device=device)
+    special_token_ids = torch.tensor(
+        [i for t, i in tokenizer.get_vocab().items() if t.startswith('<')] + [-100]
+    , device=device)
     logger.info(f'Model size: {sum(p.numel() for p in model.parameters() if p.requires_grad) / 1e6:.2f}M parameters')
 
     dataset = MaskSeqDataset('data/tsa_pfam_supfam_common.fasta', tokenizer, seq_len=512)
@@ -124,7 +126,7 @@ def main():
     num_training_steps = num_epochs * len(dataloader)
     progress_bar = tqdm(range(num_training_steps))
 
-    optimizer = AdamW(model.parameters())
+    optimizer = AdamW(model.parameters(), lr=5e-5)
     lr_scheduler = get_scheduler(
         'linear',
         optimizer=optimizer,
