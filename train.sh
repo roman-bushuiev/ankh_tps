@@ -7,7 +7,7 @@
 # qsub -A $PROJECT_ID -q qnvidia -l walltime=48:00:00 train.sh
 
 # Change to working directory
-cd "${PBS_O_WORKDIR}" || exit 1
+cd "${PBS_O_WORKDIR}/ankh_tps" || exit 1
 
 # Prepare project environment
 . "${HOME}/miniconda3/etc/profile.d/conda.sh"
