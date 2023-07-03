@@ -113,7 +113,7 @@ class MaskSeqDataset(Dataset):
 def main():
 
     num_devices = 8
-    lr = 1e-5
+    lr = 5e-5
     batch_size = 4 * num_devices
     seq_len = 512
     val_frac = 0.1
@@ -156,7 +156,7 @@ def main():
         num_training_steps=num_training_steps
     )
 
-    def forward(batch, i, val):
+    def forward(batch, i, epoch, val):
         """ Forward pass of the model """
 
         batch = {k: v.to(device) for k, v in batch.items()}
@@ -174,9 +174,8 @@ def main():
 
         # Log
         log_prefix = 'Val' if val else 'Train'
-        if i % 10 == 0:
-            # logger.info(f'[{i} {log_prefix}] loss: {loss.item()}, acc: {acc}')
-            wandb.log({f'{log_prefix} loss': loss.item(), f'{log_prefix} accuracy': acc})
+        if i % 50 == 0:
+            wandb.log({f'{log_prefix} loss': loss.item(), f'{log_prefix} accuracy': acc, 'epoch': epoch})
         return loss
 
     for epoch in range(num_epochs):
@@ -185,7 +184,7 @@ def main():
         model.train()
         for i, batch in enumerate(train_loader):
 
-            loss = forward(batch, i, val=False)
+            loss = forward(batch, i, epoch, val=False)
             loss.backward()
 
             optimizer.step()
@@ -198,7 +197,7 @@ def main():
         model.eval()
         with torch.no_grad():
             for i, batch in enumerate(val_loader):
-                loss = forward(batch, i, val=True)
+                loss = forward(batch, i, epoch, val=True)
 
         torch.save({
             'epoch': epoch,
