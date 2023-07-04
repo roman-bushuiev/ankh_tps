@@ -124,6 +124,8 @@ def main():
 
     logger = setup_logger(log_pth)
     wandb.init(project='ankh_tps', name=run_name)
+    torch.manual_seed(3407)
+    np.random.seed(3407)
 
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
