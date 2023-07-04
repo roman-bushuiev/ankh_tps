@@ -182,6 +182,12 @@ def main():
 
     for epoch in range(num_epochs):
 
+        # Validation
+        model.eval()
+        with torch.no_grad():
+            for i, batch in enumerate(val_loader):
+                loss = forward(batch, i, epoch, val=True)
+
         # Train
         model.train()
         for i, batch in enumerate(train_loader):
@@ -195,20 +201,12 @@ def main():
             optimizer.zero_grad()
             progress_bar.update()
 
-        # Validation
-        model.eval()
-        with torch.no_grad():
-            for i, batch in enumerate(val_loader):
-                loss = forward(batch, i, epoch, val=True)
-
         torch.save({
             'epoch': epoch,
             'model_state_dict': model.state_dict(),
             'optimizer_state_dict': optimizer.state_dict(),
             'loss': loss,
         }, f'./tps_ankh_{run_name}.pth')
-
-        logger.info(f'epoch: {epoch + 1} -- loss: {loss}')
 
 
 if __name__ == '__main__':
