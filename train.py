@@ -204,7 +204,7 @@ def main():
             'model_state_dict': model.state_dict(),
             'optimizer_state_dict': optimizer.state_dict(),
             'loss': loss,
-        }, f'./tps_ankh.pth')
+        }, f'./tps_ankh_{run_name}.pth')
 
         logger.info(f'epoch: {epoch + 1} -- loss: {loss}')
 
